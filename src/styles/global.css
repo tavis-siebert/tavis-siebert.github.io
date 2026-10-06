@@ -8,7 +8,7 @@
   --accent-soft: rgba(31, 111, 139, 0.1);
   color-scheme: light;
 
-  --serif: 'Newsreader', Georgia, serif;
+  --display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --width: 760px;
 }
@@ -73,9 +73,9 @@ a:hover {
 
 h1,
 h2 {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 

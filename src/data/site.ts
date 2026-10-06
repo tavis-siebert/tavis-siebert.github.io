@@ -6,6 +6,10 @@ export const site = {
   description:
     'Tavis Siebert — computer science master’s student at ETH Zürich working on computer vision, representation learning, and robotics.',
   photo: '/images/tavis.jpg',
+  // Pages in the header bar (your name, on the left, always links home).
+  nav: [
+    { label: 'Photos', href: '/photos' },
+  ],
   links: [
     { label: 'Email', href: 'mailto:tsiebert@student.ethz.ch' },
     { label: 'Scholar', href: 'https://scholar.google.com/citations?hl=en&user=rBus-swAAAAJ' },

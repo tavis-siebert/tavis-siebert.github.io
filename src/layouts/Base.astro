@@ -5,10 +5,10 @@ import { site } from '../data/site';
 
 interface Props {
   title?: string;
-  backLink?: boolean;
 }
 
-const { title = site.name, backLink = false } = Astro.props;
+const { title = site.name } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <!doctype html>
@@ -25,7 +25,7 @@ const { title = site.name, backLink = false } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <!-- Apply a saved theme before the page paints, so it doesn't flash. -->
@@ -37,30 +37,72 @@ const { title = site.name, backLink = false } = Astro.props;
     </script>
   </head>
   <body>
-    <div class="topbar container">
-      {backLink ? <a class="back" href="/">← {site.name}</a> : <span />}
-      <ThemeToggle />
-    </div>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="home" href="/">{site.name}</a>
+        <nav>
+          {
+            site.nav.map((item) => (
+              <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+          <ThemeToggle />
+        </nav>
+      </div>
+    </header>
     <slot />
   </body>
 </html>
 
 <style>
   .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--faint);
+  }
+
+  .topbar-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 20px;
+    height: 60px;
   }
 
-  .back {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--muted);
+  .home,
+  nav a {
+    line-height: 1;
     text-decoration: none;
   }
 
-  .back:hover {
+  .home {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+  }
+
+  nav a {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
     color: var(--accent);
   }
 </style>

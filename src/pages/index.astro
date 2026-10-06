@@ -13,7 +13,7 @@ const publications = parseBibtex(bib);
   <header class="hero">
     <div class="container hero-inner">
       <img class="photo" src={site.photo} alt={`Photo of ${site.name}`} width="180" height="212" />
-      <div>
+      <div class="intro">
         <h1>{site.name}</h1>
         <p class="tagline">{site.tagline}</p>
         <nav class="links">
@@ -41,7 +41,7 @@ const publications = parseBibtex(bib);
 
 <style>
   .hero {
-    padding: 2.5rem 0 3.5rem;
+    padding: 3.5rem 0 3.5rem;
   }
 
   .hero-inner {
@@ -59,6 +59,13 @@ const publications = parseBibtex(bib);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 12px 32px -12px rgba(0, 0, 0, 0.25);
   }
 
+  /* Name, tagline, and link buttons centered on one another. */
+  .intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   h1 {
     font-size: clamp(2.4rem, 6vw, 3.4rem);
     margin: 0;
@@ -73,6 +80,7 @@ const publications = parseBibtex(bib);
   .links {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
   }
 
@@ -112,13 +120,22 @@ const publications = parseBibtex(bib);
 
   @media (max-width: 600px) {
     .hero {
-      padding: 1.5rem 0 2.5rem;
+      padding: 2.5rem 0 2.5rem;
     }
 
     .hero-inner {
       flex-direction: column;
       align-items: flex-start;
       gap: 1.5rem;
+    }
+
+    /* Stacked under the photo on phones, so left-align everything. */
+    .intro {
+      align-items: flex-start;
+    }
+
+    .links {
+      justify-content: flex-start;
     }
 
     .photo {
