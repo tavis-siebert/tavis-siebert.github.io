@@ -28,9 +28,9 @@ export const photoDetails: Record<string, PhotoDetails> = {
     location: 'Hakone, Japan',
     camera: 'iPhone 15 Pro',
   },
-  'goat-of-quandery.jpeg': {
+  'goat-of-quandary.jpeg': {
     description: 'Mountain goats are plentiful in the Rockies',
-    location: 'Quandery Peak, Colorado, USA',
+    location: 'Quandary Peak, Colorado, USA',
     camera: 'Canon EOS R50',
   },
   'postcard-moorea.jpeg': {
