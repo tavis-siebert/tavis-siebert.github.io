@@ -1,7 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { descriptions } from '../data/photos';
+import { photoDetails } from '../data/photos';
 import { site } from '../data/site';
 
 // Every image in src/photos/ shows up here, in file-name order.
@@ -18,7 +18,8 @@ const photos = await Promise.all(
       const name = path.split('/').pop()!;
       const thumb = await getImage({ src, width: Math.min(800, src.width), format: 'webp' });
       const full = await getImage({ src, width: Math.min(2000, src.width), format: 'webp' });
-      return { name, description: descriptions[name] ?? '', thumb, full, width: src.width, height: src.height };
+      const { description = '', location = '', camera = '' } = photoDetails[name] ?? {};
+      return { name, description, location, camera, thumb, full, width: src.width, height: src.height };
     }),
 );
 ---
@@ -33,7 +34,7 @@ const photos = await Promise.all(
       {
         photos.map((p, i) => (
           <button class="item" type="button" data-index={i} aria-label={`Open photo ${i + 1}`}>
-            <img src={p.thumb.src} width={p.width} height={p.height} alt={p.description} loading="lazy" decoding="async" />
+            <img src={p.thumb.src} width={p.width} height={p.height} alt={p.description || p.location} loading="lazy" decoding="async" />
           </button>
         ))
       }
@@ -55,7 +56,7 @@ const photos = await Promise.all(
     is:inline
     type="application/json"
     id="photo-data"
-    set:html={JSON.stringify(photos.map((p) => ({ src: p.full.src, description: p.description })))}
+    set:html={JSON.stringify(photos.map(({ full, description, location, camera }) => ({ src: full.src, description, location, camera })))}
   />
 </Base>
 
@@ -108,7 +109,7 @@ const photos = await Promise.all(
     margin: 0;
     padding: 0;
     border: 0;
-    background: rgba(10, 12, 14, 0.97);
+    background: #0a0c0e;
     color: #f1f2f3;
   }
 
@@ -151,6 +152,35 @@ const photos = await Promise.all(
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
+  }
+
+  /* Caption contents are created by the script below, hence :global. */
+  figcaption :global(.description) {
+    margin: 0 0 0.4rem;
+  }
+
+  figcaption :global(.meta) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+    font-size: 0.8rem;
+    color: #c3cad0;
+  }
+
+  figcaption :global(.meta span) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  figcaption :global(svg) {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   /* Small hint in the corner that a description exists. */
@@ -238,9 +268,34 @@ const photos = await Promise.all(
 </style>
 
 <script>
-  const photos: { src: string; description: string }[] = JSON.parse(
-    document.getElementById('photo-data')!.textContent!,
-  );
+  type Photo = { src: string; description: string; location: string; camera: string };
+  const photos: Photo[] = JSON.parse(document.getElementById('photo-data')!.textContent!);
+
+  const icons = {
+    location: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 6.5 10 4h4l1.5 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  };
+
+  // Description on top, then a smaller line with location and camera.
+  function fillCaption(p: Photo) {
+    caption.replaceChildren();
+    if (p.description) {
+      const d = document.createElement('p');
+      d.className = 'description';
+      d.textContent = p.description;
+      caption.append(d);
+    }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    for (const key of ['location', 'camera'] as const) {
+      if (!p[key]) continue;
+      const item = document.createElement('span');
+      item.innerHTML = icons[key];
+      item.append(p[key]);
+      meta.append(item);
+    }
+    if (meta.childElementCount) caption.append(meta);
+  }
   const dialog = document.querySelector<HTMLDialogElement>('.lightbox')!;
   const figure = dialog.querySelector('figure')!;
   const img = figure.querySelector('img')!;
@@ -249,11 +304,11 @@ const photos = await Promise.all(
 
   function show(i: number) {
     index = (i + photos.length) % photos.length;
-    const { src, description } = photos[index];
-    img.src = src;
-    img.alt = description;
-    caption.textContent = description;
-    figure.classList.toggle('has-description', description !== '');
+    const p = photos[index];
+    img.src = p.src;
+    img.alt = p.description || p.location;
+    fillCaption(p);
+    figure.classList.toggle('has-description', caption.childElementCount > 0);
     figure.classList.remove('show');
   }
 

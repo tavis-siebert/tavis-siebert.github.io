@@ -10,7 +10,7 @@ Personal research website, built with [Astro](https://astro.build).
 | Bio (Markdown) | `src/data/bio.md` |
 | Publications (paste BibTeX) | `src/data/publications.bib` |
 | Gallery photos | `src/photos/` (see below) |
-| Photo descriptions (optional) | `src/data/photos.ts` |
+| Photo descriptions, locations, cameras | `src/data/photos.ts` |
 | Profile photo, CV, other files | `public/` |
 | Colors and fonts | `src/styles/global.css` |
 
