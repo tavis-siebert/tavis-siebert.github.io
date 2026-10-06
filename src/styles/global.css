@@ -6,15 +6,17 @@
   --faint: #e6e3dc;
   --accent: #1f6f8b; /* pool blue */
   --accent-soft: rgba(31, 111, 139, 0.1);
-  --dot: 31, 111, 139; /* rgb for the ripple canvas */
+  color-scheme: light;
 
   --serif: 'Newsreader', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --width: 760px;
 }
 
+/* Dark theme: follows the system setting unless the visitor picked a theme
+   with the toggle (stored as data-theme on <html>). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #111416;
     --surface: #171b1e;
     --text: #e7e9ea;
@@ -22,8 +24,19 @@
     --faint: #262c30;
     --accent: #6cc3de;
     --accent-soft: rgba(108, 195, 222, 0.12);
-    --dot: 108, 195, 222;
+    color-scheme: dark;
   }
+}
+
+:root[data-theme='dark'] {
+  --bg: #111416;
+  --surface: #171b1e;
+  --text: #e7e9ea;
+  --muted: #9aa3aa;
+  --faint: #262c30;
+  --accent: #6cc3de;
+  --accent-soft: rgba(108, 195, 222, 0.12);
+  color-scheme: dark;
 }
 
 *,

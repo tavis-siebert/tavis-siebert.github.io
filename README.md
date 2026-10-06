@@ -9,9 +9,23 @@ Personal research website, built with [Astro](https://astro.build).
 | Name, tagline, links | `src/data/site.ts` |
 | Bio (Markdown) | `src/data/bio.md` |
 | Publications (paste BibTeX) | `src/data/publications.bib` |
-| Photo, CV, other files | `public/` |
+| Gallery photos | `src/photos/` (see below) |
+| Gallery captions (optional) | `src/data/photos.ts` |
+| Profile photo, CV, other files | `public/` |
 | Colors and fonts | `src/styles/global.css` |
-| Header animation | `src/components/RippleField.astro` |
+
+## Adding photos to the gallery
+
+Copy photos (JPG, PNG, or iPhone HEIC) into `src/photos/`, then run:
+
+```bash
+npm run photos
+```
+
+This converts HEIC to JPG, shrinks anything over 2400px, and strips metadata
+(including GPS location), replacing the files in place, so keep your originals
+elsewhere. It also runs automatically on `npm run dev`. Photos appear in
+file-name order, so prefix names with numbers (`01-alps.jpg`) to control it.
 
 ## Running locally
 

@@ -1,12 +1,14 @@
 ---
 import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { site } from '../data/site';
 
 interface Props {
   title?: string;
+  backLink?: boolean;
 }
 
-const { title = site.name } = Astro.props;
+const { title = site.name, backLink = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,8 +28,39 @@ const { title = site.name } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap"
       rel="stylesheet"
     />
+    <!-- Apply a saved theme before the page paints, so it doesn't flash. -->
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme) document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
   </head>
   <body>
+    <div class="topbar container">
+      {backLink ? <a class="back" href="/">← {site.name}</a> : <span />}
+      <ThemeToggle />
+    </div>
     <slot />
   </body>
 </html>
+
+<style>
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+  }
+
+  .back {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--accent);
+  }
+</style>

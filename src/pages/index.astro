@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import RippleField from '../components/RippleField.astro';
 import Publication from '../components/Publication.astro';
 import { Content as Bio } from '../data/bio.md';
 import bib from '../data/publications.bib?raw';
@@ -12,7 +11,6 @@ const publications = parseBibtex(bib);
 
 <Base>
   <header class="hero">
-    <RippleField />
     <div class="container hero-inner">
       <img class="photo" src={site.photo} alt={`Photo of ${site.name}`} width="180" height="212" />
       <div>
@@ -43,13 +41,10 @@ const publications = parseBibtex(bib);
 
 <style>
   .hero {
-    position: relative;
-    overflow: hidden;
-    padding: 5rem 0 3.5rem;
+    padding: 2.5rem 0 3.5rem;
   }
 
   .hero-inner {
-    position: relative;
     display: flex;
     align-items: center;
     gap: 2.25rem;
@@ -117,7 +112,7 @@ const publications = parseBibtex(bib);
 
   @media (max-width: 600px) {
     .hero {
-      padding: 3rem 0 2.5rem;
+      padding: 1.5rem 0 2.5rem;
     }
 
     .hero-inner {
