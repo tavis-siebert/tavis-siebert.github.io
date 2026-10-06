@@ -1,0 +1,87 @@
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #1d2125;
+  --muted: #5f6870;
+  --faint: #e6e3dc;
+  --accent: #1f6f8b; /* pool blue */
+  --accent-soft: rgba(31, 111, 139, 0.1);
+  --dot: 31, 111, 139; /* rgb for the ripple canvas */
+
+  --serif: 'Newsreader', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --width: 760px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111416;
+    --surface: #171b1e;
+    --text: #e7e9ea;
+    --muted: #9aa3aa;
+    --faint: #262c30;
+    --accent: #6cc3de;
+    --accent-soft: rgba(108, 195, 222, 0.12);
+    --dot: 108, 195, 222;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+
+a:hover {
+  text-decoration-color: var(--accent);
+}
+
+h1,
+h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin: 0 0 1.25rem;
+}
+
+.container {
+  max-width: var(--width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+section {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--faint);
+}
+
+::selection {
+  background: var(--accent-soft);
+}

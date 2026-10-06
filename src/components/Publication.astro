@@ -1,0 +1,122 @@
+---
+import type { Publication } from '../lib/bibtex';
+import { site } from '../data/site';
+
+interface Props {
+  pub: Publication;
+}
+
+const { pub } = Astro.props;
+const links = [
+  { label: 'Paper', href: pub.url },
+  { label: 'PDF', href: pub.pdf },
+  { label: 'Code', href: pub.code },
+  { label: 'Project', href: pub.project },
+].filter((l) => l.href);
+---
+
+<article class="pub">
+  <div class="year">{pub.year || ''}</div>
+  <div>
+    <h3>
+      {pub.url ? <a href={pub.url}>{pub.title}</a> : pub.title}
+    </h3>
+    <p class="authors">
+      {pub.authors.map((a, i) => (
+        <>
+          {a === site.name ? <strong>{a}</strong> : a}
+          {i < pub.authors.length - 1 && ', '}
+        </>
+      ))}
+    </p>
+    <p class="meta">
+      {pub.venue && <em>{pub.venue}</em>}
+      {pub.note && <span class="note">{pub.note}</span>}
+      {links.map((l) => <a class="tag" href={l.href}>{l.label}</a>)}
+    </p>
+  </div>
+</article>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 0.5rem;
+    padding: 0.9rem 1rem;
+    margin: 0 -1rem;
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+
+  .pub:hover {
+    background: var(--accent-soft);
+  }
+
+  .year {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 0.25rem;
+  }
+
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.93rem;
+    color: var(--muted);
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin-top: 0.35rem;
+  }
+
+  .note {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.05rem 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .tag:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  @media (max-width: 520px) {
+    .pub {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>

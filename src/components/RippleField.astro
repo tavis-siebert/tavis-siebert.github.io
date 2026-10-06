@@ -1,0 +1,146 @@
+---
+// A grid of dots behind the header that ripples like water when you move
+// the cursor over it (a nod to both pixels and the pool).
+---
+
+<canvas class="ripple-field" aria-hidden="true"></canvas>
+
+<style>
+  .ripple-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 75% 85% at 70% 45%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 75% 85% at 70% 45%, #000 30%, transparent 100%);
+  }
+</style>
+
+<script>
+  const SPACING = 18; // px between dots
+  const DAMPING = 0.965; // how quickly ripples fade (closer to 1 = longer)
+
+  const canvas = document.querySelector<HTMLCanvasElement>('.ripple-field')!;
+  const ctx = canvas.getContext('2d')!;
+  const host = canvas.parentElement!;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let cols = 0, rows = 0, w = 0, h = 0;
+  let cur = new Float32Array(0);
+  let prev = new Float32Array(0);
+  let color = '';
+  let running = false;
+  let visible = true;
+  let lastDrop = 0;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = host.clientWidth;
+    h = host.clientHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(w / SPACING) + 1;
+    rows = Math.ceil(h / SPACING) + 1;
+    cur = new Float32Array(cols * rows);
+    prev = new Float32Array(cols * rows);
+    color = getComputedStyle(document.documentElement).getPropertyValue('--dot').trim();
+    draw();
+  }
+
+  function disturb(x: number, y: number, strength: number) {
+    const cx = Math.round(x / SPACING);
+    const cy = Math.round(y / SPACING);
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const gx = cx + dx, gy = cy + dy;
+        if (gx > 0 && gx < cols - 1 && gy > 0 && gy < rows - 1) {
+          cur[gy * cols + gx] += strength * (dx === 0 && dy === 0 ? 1 : 0.5);
+        }
+      }
+    }
+    wake();
+  }
+
+  // Classic two-buffer water ripple simulation.
+  function step() {
+    let energy = 0;
+    for (let y = 1; y < rows - 1; y++) {
+      for (let x = 1; x < cols - 1; x++) {
+        const i = y * cols + x;
+        const v = ((cur[i - 1] + cur[i + 1] + cur[i - cols] + cur[i + cols]) / 2 - prev[i]) * DAMPING;
+        prev[i] = v;
+        energy += Math.abs(v);
+      }
+    }
+    [cur, prev] = [prev, cur];
+    return energy;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const v = cur[y * cols + x];
+        const a = Math.min(0.85, 0.16 + Math.abs(v) * 0.6);
+        const r = Math.min(3.2, 1 + Math.abs(v) * 1.6);
+        ctx.fillStyle = `rgba(${color}, ${a})`;
+        ctx.beginPath();
+        ctx.arc(x * SPACING, y * SPACING, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function frame(t: number) {
+    if (!visible || document.hidden) {
+      running = false;
+      return;
+    }
+    // An occasional raindrop so the field feels alive.
+    if (t - lastDrop > 1400) {
+      lastDrop = t;
+      disturb(Math.random() * w, Math.random() * h, 1.2);
+    }
+    step();
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  function wake() {
+    if (reduceMotion || running || !visible || document.hidden) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
+  let lastX = -1, lastY = -1;
+  window.addEventListener('pointermove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+    // Scale the push by how fast the pointer moves.
+    const speed = lastX < 0 ? 0 : Math.hypot(x - lastX, y - lastY);
+    lastX = x;
+    lastY = y;
+    disturb(x, y, Math.min(2.5, 0.4 + speed * 0.08));
+  });
+
+  host.addEventListener('pointerdown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    disturb(e.clientX - rect.left, e.clientY - rect.top, 6);
+  });
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    wake();
+  }).observe(canvas);
+
+  document.addEventListener('visibilitychange', wake);
+  window.addEventListener('resize', resize);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', resize);
+
+  resize();
+  wake();
+</script>
