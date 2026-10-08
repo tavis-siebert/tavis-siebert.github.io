@@ -33,10 +33,6 @@ const publications = parseBibtex(bib);
       {publications.map((pub) => <Publication pub={pub} />)}
     </section>
   </main>
-
-  <footer class="container">
-    <p>© {new Date().getFullYear()} {site.name}</p>
-  </footer>
 </Base>
 
 <style>
@@ -108,14 +104,6 @@ const publications = parseBibtex(bib);
 
   .bio :global(p:last-child) {
     margin-bottom: 0;
-  }
-
-  footer p {
-    margin: 0;
-    padding: 2rem 0 3rem;
-    color: var(--muted);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--faint);
   }
 
   @media (max-width: 600px) {

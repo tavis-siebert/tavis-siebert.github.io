@@ -39,3 +39,8 @@ npm run dev      # preview at http://localhost:4321, auto-reloads on save
 Pushing to the `main` branch of the `tavis-siebert.github.io` repo builds and deploys the
 site automatically (see `.github/workflows/deploy.yml`). In the repo's
 Settings → Pages, set **Source** to **GitHub Actions**.
+
+## License
+
+© Tavis Siebert. All rights reserved. The photos and written content here may not
+be copied, reused, or used to train AI models without permission. See [LICENSE](LICENSE).

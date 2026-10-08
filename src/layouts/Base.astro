@@ -18,6 +18,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={site.description} />
+    <!-- Ask AI/image scrapers not to train on this site (see also robots.txt). -->
+    <meta name="robots" content="noai, noimageai" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={site.description} />
     <meta property="og:image" content={new URL(site.photo, Astro.site)} />
@@ -53,6 +55,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </div>
     </header>
     <slot />
+    <footer class="container">
+      <p>
+        © {new Date().getFullYear()} {site.name}. All rights reserved. Photos may not be used without permission.
+      </p>
+    </footer>
   </body>
 </html>
 
@@ -104,5 +111,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   nav a:hover,
   nav a[aria-current='page'] {
     color: var(--accent);
+  }
+
+  footer p {
+    margin: 0;
+    padding: 2rem 0 3rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--faint);
   }
 </style>
