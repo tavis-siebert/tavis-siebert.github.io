@@ -5,6 +5,7 @@ export interface Publication {
   type: string;
   title: string;
   authors: string[];
+  equal: string[]; // authors who contributed equally (marked with *)
   year: number;
   venue: string;
   url?: string;
@@ -86,6 +87,8 @@ function formatAuthor(a: string): string {
   return parts.length === 2 ? `${parts[1]} ${parts[0]}` : a.trim();
 }
 
+const splitAuthors = (s = '') => s.split(/\s+and\s+/).map(formatAuthor).filter(Boolean);
+
 function venueOf(f: Fields): string {
   if (f.journal && !/arxiv/i.test(f.journal)) return f.journal;
   if (f.booktitle) return f.booktitle;
@@ -99,7 +102,8 @@ export function parseBibtex(src: string): Publication[] {
       key,
       type,
       title: f.title ?? '',
-      authors: (f.author ?? '').split(/\s+and\s+/).map(formatAuthor).filter(Boolean),
+      authors: splitAuthors(f.author),
+      equal: splitAuthors(f.equal),
       year: Number(f.year) || 0,
       venue: venueOf(f),
       url: f.url ?? (f.doi ? `https://doi.org/${f.doi}` : undefined),

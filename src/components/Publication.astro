@@ -25,6 +25,7 @@ const links = [
       {pub.authors.map((a, i) => (
         <>
           {a === site.name ? <strong>{a}</strong> : a}
+          {pub.equal.includes(a) && <sup>*</sup>}
           {i < pub.authors.length - 1 && ', '}
         </>
       ))}
@@ -32,6 +33,7 @@ const links = [
     <p class="meta">
       {pub.venue && <em>{pub.venue}</em>}
       {pub.note && <span class="note">{pub.note}</span>}
+      {pub.equal.length > 0 && <span class="equal">* Equal contribution</span>}
       {links.map((l) => <a class="tag" href={l.href}>{l.label}</a>)}
     </p>
   </div>
@@ -97,6 +99,16 @@ const links = [
   .note {
     color: var(--accent);
     font-weight: 500;
+  }
+
+  sup {
+    font-size: 0.75em;
+    line-height: 0;
+    margin-left: 1px;
+  }
+
+  .equal {
+    font-size: 0.85rem;
   }
 
   .tag {
